@@ -28,9 +28,13 @@ jobs:
 
       - name: Terraform Init
         run: terraform init
+        working-directory: test-case
 
       - name: Terraform Plan
         run: terraform plan
+        working-directory: test-case
 
     #   - name: Terraform Apply
+    #     if: github.ref == 'refs/heads/main'
     #     run: terraform apply -auto-approve
+    #     working-directory: test-case
