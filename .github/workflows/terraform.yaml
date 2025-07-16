@@ -1,0 +1,41 @@
+name: Terraform on Azure
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - '*'
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    continue-on-error: false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.5.0
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Terraform Init
+        run: terraform init
+        working-directory: test-case
+
+      - name: Terraform Plan
+        run: terraform plan
+        working-directory: test-case
+
+    #   - name: Terraform Apply
+    #     if: github.ref == 'refs/heads/main'
+    #     run: terraform apply -auto-approve
+    #     working-directory: test-case
