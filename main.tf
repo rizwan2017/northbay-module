@@ -64,3 +64,9 @@ resource "azurerm_container_registry" "acr" {
   public_network_access_enabled = true
   tags                          = local.default_tags
 } 
+
+resource "azurerm_role_assignment" "aks_acr_pull" {
+  principal_id         = azurerm_kubernetes_cluster.aks.identity[0].principal_id
+  role_definition_name = "AcrPull"
+  scope                = azurerm_container_registry.acr.id
+}
