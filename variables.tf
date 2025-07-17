@@ -23,7 +23,7 @@ variable "dns_prefix" {
 variable "acr_name" {
   description = "The name of the Azure Container Registry. Must be globally unique."
   type        = string
-} 
+}
 
 variable "agent_pool_vm_size" {
   description = "The size of the agent pool VM."

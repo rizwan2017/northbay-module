@@ -34,7 +34,7 @@ resource "azurerm_network_security_group" "private_nsg" {
 
 # Attach NSG to private subnets
 resource "azurerm_subnet_network_security_group_association" "private_assoc" {
-  count = 3
-  subnet_id = azurerm_subnet.private_subnets[count.index].id
+  count                     = 3
+  subnet_id                 = azurerm_subnet.private_subnets[count.index].id
   network_security_group_id = azurerm_network_security_group.private_nsg.id
 }

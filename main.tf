@@ -3,9 +3,9 @@
 locals {
   node_pools = {
     worker1 = {
-      zone            = "1"
-      subnet_index    = 0
-      node_count      = 1
+      zone         = "1"
+      subnet_index = 0
+      node_count   = 1
     }
   }
 }
@@ -24,12 +24,12 @@ resource "azurerm_kubernetes_cluster" "aks" {
   tags                = local.default_tags
 
   default_node_pool {
-    name       = "systempool"
-    node_count = 1
-    vm_size    = var.agent_pool_vm_size
-    vnet_subnet_id = azurerm_subnet.private_subnets[0].id
+    name                        = "systempool"
+    node_count                  = 1
+    vm_size                     = var.agent_pool_vm_size
+    vnet_subnet_id              = azurerm_subnet.private_subnets[0].id
     temporary_name_for_rotation = "tempnp01"
-    orchestrator_version = null
+    orchestrator_version        = null
   }
 
   identity {
@@ -38,8 +38,8 @@ resource "azurerm_kubernetes_cluster" "aks" {
 
   network_profile {
     network_plugin = "azure"
-    service_cidr       = "10.240.0.0/16"
-    dns_service_ip     = "10.240.0.10"
+    service_cidr   = "10.240.0.0/16"
+    dns_service_ip = "10.240.0.10"
   }
 }
 
@@ -56,11 +56,17 @@ resource "azurerm_kubernetes_cluster_node_pool" "zonal_pools" {
 }
 
 resource "azurerm_container_registry" "acr" {
-  name                = var.acr_name
-  resource_group_name = azurerm_resource_group.aks_rg.name
-  location            = azurerm_resource_group.aks_rg.location
-  sku                 = "Basic"
-  admin_enabled       = true
+  name                          = var.acr_name
+  resource_group_name           = azurerm_resource_group.aks_rg.name
+  location                      = azurerm_resource_group.aks_rg.location
+  sku                           = "Basic"
+  admin_enabled                 = true
   public_network_access_enabled = true
-  tags                = local.default_tags
+  tags                          = local.default_tags
 } 
+
+resource "azurerm_role_assignment" "aks_acr_pull" {
+  principal_id         = azurerm_kubernetes_cluster.aks.identity[0].principal_id
+  role_definition_name = "AcrPull"
+  scope                = azurerm_container_registry.acr.id
+}
